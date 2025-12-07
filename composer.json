@@ -1,0 +1,41 @@
+{
+  "name": "michael-orenda/logging",
+  "description": "Unified hybrid logging package (activity, security, and error logs) for Laravel applications.",
+  "keywords": ["logging", "security", "activity", "error", "laravel", "package"],
+  "homepage": "https://gitlab.com/michael-orenda/logging",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Michael Orenda",
+      "email": "rminchrist@gmail.com",
+      "role": "Software Engineer"
+    }
+    ],
+  "require": {
+    "php": ">=8.2",
+    "illuminate/support": "^12.0",
+    "illuminate/database": "^12.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "MichaelOrenda\\Logging\\": "src/"
+    },
+    "files": [
+        "src/Support/helpers.php"
+    ]
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "MichaelOrenda\\Logging\\Tests\\": "tests/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "MichaelOrenda\\Logging\\Providers\\LoggingServiceProvider"
+      ]
+    }
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true
+}

@@ -1,0 +1,115 @@
+LOGGING PACKAGE — INSTRUCTIONS FILE  
+-----------------------------------
+
+This file summarizes installation, usage, and scheduling steps for the Logging package.
+
+----------------------------------------------------
+1. INSTALLATION
+----------------------------------------------------
+
+Add the package via Composer:
+
+    composer require michael-orenda/logging
+
+If using a local path repository:
+
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../logging"
+        }
+    ]
+
+Then:
+
+    composer require michael-orenda/logging:@dev
+
+----------------------------------------------------
+2. RUN MIGRATIONS
+----------------------------------------------------
+
+Execute:
+
+    php artisan migrate
+
+This creates:
+
+- activity_logs  
+- security_logs  
+- error_logs  
+
+----------------------------------------------------
+3. USING THE LOGGER FACADE
+----------------------------------------------------
+
+Activity log:
+
+    Logger::activity('record_created', ['id' => 1]);
+
+Security log:
+
+    Logger::security('login_failed', ['ip' => request()->ip()]);
+
+Error log:
+
+    Logger::error('exception_thrown', ['message' => 'Failure']);
+
+----------------------------------------------------
+4. USING HELPER FUNCTIONS
+----------------------------------------------------
+
+    log_activity('event_name', ['context' => true]);
+    log_security('event_name', ['foo' => 'bar']);
+    log_error('event_name', ['message' => 'Error']);
+
+----------------------------------------------------
+5. PRUNE OLD LOGS
+----------------------------------------------------
+
+Run:
+
+    php artisan logging:prune
+
+Optional:
+
+    php artisan logging:prune --days=30
+    php artisan logging:prune --activity
+    php artisan logging:prune --security
+    php artisan logging:prune --error
+
+----------------------------------------------------
+6. SCHEDULE PRUNING
+----------------------------------------------------
+
+Add in app/Console/Kernel.php:
+
+    protected function schedule(Schedule $schedule)
+    {
+        $schedule->command('logging:prune')->daily();
+    }
+
+----------------------------------------------------
+7. RETENTION POLICY
+----------------------------------------------------
+
+Configured in config/logging.php:
+
+    'retention_days' => [
+        'activity' => 365,
+        'security' => 1095,
+        'error' => 90,
+    ]
+
+----------------------------------------------------
+8. TESTING
+----------------------------------------------------
+
+Route test:
+
+    Route::get('/test-log', function () {
+        log_activity('test', ['x' => 1]);
+        return 'OK';
+    });
+
+----------------------------------------------------
+END OF FILE
