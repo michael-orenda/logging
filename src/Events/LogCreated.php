@@ -2,14 +2,27 @@
 
 namespace MichaelOrenda\Logging\Events;
 
-use MichaelOrenda\Logging\Models\ActivityLog;
-use MichaelOrenda\Logging\Models\SecurityLog;
-use MichaelOrenda\Logging\Models\ErrorLog;
+use Illuminate\Foundation\Events\Dispatchable;
+use Illuminate\Queue\SerializesModels;
 
 class LogCreated
 {
-    public function __construct(
-        public string $category,
-        public object $logEntry
-    ) {}
+    use Dispatchable, SerializesModels;
+
+    public string $category;
+    /** @var object|array|null */
+    public $log;
+    public array $context;
+
+    /**
+     * @param string $category  'activity' | 'security' | 'error'
+     * @param object|array|null $log  the created log model instance or an array payload
+     * @param array $context   optional context
+     */
+    public function __construct(string $category, $log = null, array $context = [])
+    {
+        $this->category = $category;
+        $this->log = $log;
+        $this->context = $context;
+    }
 }

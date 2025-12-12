@@ -16,6 +16,9 @@ class LoggingServiceProvider extends ServiceProvider
         $this->app->singleton('logger.manager', function () {
             return new LoggerManager();
         });
+
+        $this->registerHelpers();
+
     }
 
     public function boot()
@@ -27,10 +30,20 @@ class LoggingServiceProvider extends ServiceProvider
         $this->loadMigrationsFrom(__DIR__ . '/../../database/migrations');
         $this->loadRoutesFrom(__DIR__ . '/../Routes/api.php');
 
+
         if ($this->app->runningInConsole()) {
             $this->commands([
                 \MichaelOrenda\Logging\Console\Commands\PruneLogsCommand::class,
             ]);
+        }
+    }
+
+    protected function registerHelpers()
+    {
+        $helpers = __DIR__ . '/../Support/helpers.php';
+
+        if (file_exists($helpers)) {
+            require_once $helpers;
         }
     }
 }

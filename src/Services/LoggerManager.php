@@ -8,6 +8,31 @@ use MichaelOrenda\Logging\Services\ErrorChannel;
 
 class LoggerManager
 {
+    public function __call($method, $args)
+    {
+        $levels = [
+            'debug'   => 'activity',
+            'info'    => 'activity',
+            'notice'  => 'activity',
+
+            'warning' => 'security',
+            'alert'   => 'security',
+
+            'error'   => 'error',
+            'critical'=> 'error',
+            'emergency' => 'error',
+        ];
+
+        if (isset($levels[$method])) {
+            $event   = $args[0] ?? 'event';
+            $context = $args[1] ?? [];
+
+            return $this->{$levels[$method]}($event, $context);
+        }
+
+        throw new \BadMethodCallException("Method [$method] does not exist.");
+    }
+
     public function activity(string $event, array $context = [], ?string $severity = null)
     {
         return (new ActivityChannel())->write($event, $context, $severity);

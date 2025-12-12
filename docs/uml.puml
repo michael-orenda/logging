@@ -1,0 +1,9 @@
+
+digraph LoggingPackage {
+    LoggerManager -> ActivityChannel;
+    LoggerManager -> SecurityChannel;
+    LoggerManager -> ErrorChannel;
+    ActivityChannel -> ActivityLog;
+    SecurityChannel -> SecurityLog;
+    ErrorChannel -> ErrorLog;
+}

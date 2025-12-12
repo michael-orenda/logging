@@ -3,6 +3,7 @@
 namespace MichaelOrenda\Logging\Services;
 
 use MichaelOrenda\Logging\Models\ErrorLog;
+use MichaelOrenda\Logging\Events\LogCreated;
 
 class ErrorChannel
 {
@@ -11,7 +12,7 @@ class ErrorChannel
         $severity = $severity ?? config("logging.events.$event.severity")
                     ?? config('logging.default_severity.error');
 
-        return ErrorLog::create([
+        $log = ErrorLog::create([
             'event' => $event,
             'severity' => $severity,
             'message' => $context['message'] ?? null,
@@ -19,5 +20,11 @@ class ErrorChannel
             'stack_trace' => $context['trace'] ?? null,
             'source' => $context['source'] ?? 'app',
         ]);
+
+
+        // 🔥 THIS IS THE CRITICAL MISSING PIECE
+        event(new LogCreated($log, $context));
+
+        return $log;
     }
 }

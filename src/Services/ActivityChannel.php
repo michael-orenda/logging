@@ -2,6 +2,7 @@
 
 namespace MichaelOrenda\Logging\Services;
 
+use MichaelOrenda\Logging\Events\LogCreated;
 use MichaelOrenda\Logging\Models\ActivityLog;
 
 class ActivityChannel
@@ -21,5 +22,10 @@ class ActivityChannel
             'user_agent' => request()->header('User-Agent'),
             'source' => $context['source'] ?? 'app'
         ]);
+
+        event(new LogCreated($log, $context));
+
+        return $log;
+
     }
 }

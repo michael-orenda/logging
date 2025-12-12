@@ -1,109 +1,81 @@
-# Michael Orenda — Logging Package  
-### Unified Activity, Security & Error Logging for Laravel (Hybrid Architecture)
+# Michael Orenda Logging Package
 
-This package provides a clean, modular logging system for Laravel applications, featuring:
+## Overview
+`michael-orenda/logging` is a robust logging package for Laravel applications. It supports:
 
-- **Activity logs** (CRUD actions, workflow events, system events)  
-- **Security logs** (authentication, authorization, threat detection)  
-- **Error logs** (exceptions, failures, runtime errors)  
-- **Unified logging facade**: `Logger::activity()`, `Logger::security()`, `Logger::error()`  
-- **Global helper functions**: `log_activity()`, `log_security()`, `log_error()`  
-- **Configurable log retention**  
-- **Pruning command** (`logging:prune`)  
-- Designed for integration with Notification + Error Manager packages
+- Activity Logs
+- Security Logs
+- Error Logs
+- Facade API
+- Helper functions
+- Loggable Trait for automatic logging
+- Pruning & archiving logs
+- Event dispatching for log-related events
 
-## 🚀 Installation
+## Features
+
+- Unified logging API for Activity, Security, and Error Logs.
+- Automatic logging of model CRUD actions with `Loggable` trait.
+- Prune old logs with the `logging:prune` command.
+- Provides endpoints for admin access to logs.
+
+## Installation
+
+Install using Composer:
 
 ```bash
 composer require michael-orenda/logging
 ```
 
-If using a local path repository during development:
-
-```json
-"repositories": [
-    {
-        "type": "path",
-        "url": "../logging"
-    }
-]
-```
-
-Then:
+Publish the configuration:
 
 ```bash
-composer require michael-orenda/logging:@dev
+php artisan vendor:publish --tag=logging-config
 ```
 
-Laravel will auto-discover the service provider.
-
-## 📦 Publish Config (optional)
-
-```bash
-php artisan vendor:publish --tag=config
-```
-
-## 🛢 Run Migrations
+Run migrations:
 
 ```bash
 php artisan migrate
 ```
 
-## 🔥 Usage
+## Configuration
 
-### Activity Logging
+The configuration is located in `config/logging.php`. You can set log retention policies, default severities, and other parameters.
 
-```php
-Logger::activity('record_created', ['id' => 10]);
-```
+## Usage
 
-Or helper:
+You can log events using the facade:
 
 ```php
-log_activity('record_created', ['id' => 10]);
+Logger::activity('user_logged_in', ['user_id' => $user->id]);
+Logger::security('unauthorized_access', ['ip' => $ip]);
+Logger::error('payment_failed', ['order_id' => $orderId]);
 ```
 
-### Security Logging
+## API Endpoints
+
+- `/orenda/logs/activity`
+- `/orenda/logs/security`
+- `/orenda/logs/error`
+
+These endpoints return the logs in JSON format and support pagination.
+
+## Loggable Trait
+
+To log model CRUD events, add the `Loggable` trait:
 
 ```php
-Logger::security('login_failed', ['ip' => request()->ip()]);
-```
+use Loggable;
 
-### Error Logging
-
-```php
-Logger::error('exception_thrown', ['message' => 'Something broke']);
-```
-
-# 🧹 Pruning Old Logs
-
-```bash
-php artisan logging:prune
-```
-
-### Override:
-
-```bash
-php artisan logging:prune --days=30
-```
-
-### Prune specific types:
-
-```bash
-php artisan logging:prune --activity
-```
-
-# ⏱ Schedule It
-
-Add to `app/Console/Kernel.php`:
-
-```php
-protected function schedule(Schedule $schedule)
+class User extends Model
 {
-    $schedule->command('logging:prune')->daily();
+    use Loggable;
 }
 ```
 
-# 📄 License
+---
 
-MIT
+# License
+
+MIT License
